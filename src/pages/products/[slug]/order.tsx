@@ -1,15 +1,25 @@
-import { NextPage, GetServerSideProps } from 'next'
-import { Avatar, Box, Button, Grid, ListItem, ListItemAvatar, ListItemText, TextField, Typography } from '@material-ui/core'
-import Head from 'next/head'
-import { useSnackbar } from "notistack"
-import { useForm } from "react-hook-form"
-import { Product, CreditCard } from '../../model'
-import { http } from '../../../http'
-import axios from 'axios'
-import { useRouter } from 'next/router'
+import {
+  Typography,
+  Button,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  TextField,
+  Grid,
+  ListItemText,
+  Box,
+} from "@material-ui/core";
+import axios from "axios";
+import { GetServerSideProps, NextPage } from "next";
+import { useRouter } from "next/dist/client/router";
+import Head from "next/head";
+import { useSnackbar } from "notistack";
+import { useForm } from "react-hook-form";
+import http from "../../../http";
+import { CreditCard, Product } from "../../../model";
 
 interface OrderPageProps {
-  product: Product
+  product: Product;
 }
 
 const OrderPage: NextPage<OrderPageProps> = ({ product }) => {
@@ -50,7 +60,7 @@ const OrderPage: NextPage<OrderPageProps> = ({ product }) => {
         />
       </ListItem>
       <Typography component="h2" variant="h6" gutterBottom>
-        Pague com seu cartão de crédito
+        Pague com cartão de crédito
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
@@ -111,20 +121,30 @@ const OrderPage: NextPage<OrderPageProps> = ({ product }) => {
         </Box>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default OrderPage
+export default OrderPage;
 
-export const getServerSideProps: GetServerSideProps<OrderPageProps, { slug: string }> = async (context) => {
-  const { slug } = context.params!
+export const getServerSideProps: GetServerSideProps<
+  OrderPageProps,
+  { slug: string }
+> = async (context) => {
+  const { slug } = context.params!;
   try {
-    const { data: product } = await http.get(`products/${slug}`)
-    return { props: { product } }
+    const { data: product } = await http.get(`products/${slug}`);
+
+    console.log(product);
+
+    return {
+      props: {
+        product,
+      },
+    };
   } catch (e) {
     if (axios.isAxiosError(e) && e.response?.status === 404) {
-      return { notFound: true}
+      return { notFound: true };
     }
-    throw e
+    throw e;
   }
-}
+};
